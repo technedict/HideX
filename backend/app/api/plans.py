@@ -13,22 +13,12 @@ from ..schemas.responses import (
     PolicyValidationResponse,
     PolicyViolationResponse,
 )
+from .deps import get_service
 
 router = APIRouter(prefix="/plans", tags=["plans"])
 
 # In-memory plan storage (would use database in production)
 _plans: dict = {}
-
-# Service instance
-_service: Optional[HideXService] = None
-
-
-def get_service() -> HideXService:
-    """Get or create service instance."""
-    global _service
-    if _service is None:
-        _service = HideXService()
-    return _service
 
 
 def _plan_to_response(plan) -> PlanResponse:

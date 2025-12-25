@@ -5,19 +5,9 @@ from fastapi import APIRouter, HTTPException, Depends
 
 from ..core.service import HideXService
 from ..schemas.responses import AuditLogResponse, AuditEntryResponse, ComplianceReportResponse
+from .deps import get_service
 
 router = APIRouter(prefix="/audit", tags=["audit"])
-
-# Service instance
-_service: Optional[HideXService] = None
-
-
-def get_service() -> HideXService:
-    """Get or create service instance."""
-    global _service
-    if _service is None:
-        _service = HideXService()
-    return _service
 
 
 @router.get("/current", response_model=AuditLogResponse)

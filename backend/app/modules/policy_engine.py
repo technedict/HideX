@@ -191,18 +191,57 @@ class PolicyEngine:
         rule: PolicyRule,
         plan: TransactionPlan
     ) -> Optional[PolicyViolation]:
-        """Check that no address is reused in the plan."""
-        addresses = []
-        for step in plan.steps:
-            addresses.append(step.from_address)
-            addresses.append(step.to_address)
+        """
+        Check that no address is reused inappropriately in the plan.
         
-        seen = set()
+        Problematic reuse patterns:
+        1. Same address sending multiple times (from_address appears twice)
+        2. Same address receiving multiple times (to_address appears twice)  
+        3. Circular flow: address that sends also receives (A→...→A)
+        
+        Note: In multi-hop plans, it's expected that step N's to_address
+        equals step N+1's from_address (funds flow through). This is allowed.
+        """
+        from_addresses = []
+        to_addresses = []
+        
+        for step in plan.steps:
+            from_addresses.append(step.from_address.lower())
+            to_addresses.append(step.to_address.lower())
+        
         duplicates = set()
-        for addr in addresses:
-            if addr in seen:
+        
+        # Check for duplicate from_addresses (same address sending multiple times)
+        seen_from = set()
+        for addr in from_addresses:
+            if addr in seen_from:
                 duplicates.add(addr)
-            seen.add(addr)
+            seen_from.add(addr)
+        
+        # Check for duplicate to_addresses (same address receiving multiple times)
+        seen_to = set()
+        for addr in to_addresses:
+            if addr in seen_to:
+                duplicates.add(addr)
+            seen_to.add(addr)
+        
+        # Check for circular flow: any address that sends AND receives is problematic
+        # This detects patterns like A→B→A or A→B→C→A
+        from_set = set(from_addresses)
+        to_set = set(to_addresses)
+        circular_addresses = from_set & to_set  # Addresses that both send and receive
+        
+        # However, intermediate hops are expected to receive then send
+        # We only flag if it's a true circular pattern (sender receives later)
+        for addr in circular_addresses:
+            # Find first occurrence as sender
+            first_send_idx = from_addresses.index(addr)
+            # Find any occurrence as receiver that happens AFTER the first send
+            for i, to_addr in enumerate(to_addresses):
+                if to_addr == addr and i >= first_send_idx:
+                    # This address receives funds after it has sent - circular!
+                    duplicates.add(addr)
+                    break
         
         if duplicates:
             return PolicyViolation(

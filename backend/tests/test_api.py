@@ -48,8 +48,8 @@ class TestPlanEndpoints:
     
     def test_create_simple_plan(self, client):
         """Test creating a simple plan."""
-        # First initialize wallet
-        client.post("/wallets/initialize")
+        # First initialize wallet (must pass empty JSON body)
+        client.post("/wallets/initialize", json={})
         
         response = client.post("/plans", json={
             "source_address": "0x1234567890123456789012345678901234567890",
@@ -66,8 +66,8 @@ class TestPlanEndpoints:
     
     def test_create_multi_hop_plan(self, client):
         """Test creating a multi-hop plan."""
-        # First initialize wallet
-        client.post("/wallets/initialize")
+        # First initialize wallet (must pass empty JSON body)
+        client.post("/wallets/initialize", json={})
         
         response = client.post("/plans", json={
             "source_address": "0x1234567890123456789012345678901234567890",
@@ -84,7 +84,7 @@ class TestPlanEndpoints:
     def test_get_plan(self, client):
         """Test getting a plan by ID."""
         # First create a plan
-        client.post("/wallets/initialize")
+        client.post("/wallets/initialize", json={})
         create_response = client.post("/plans", json={
             "source_address": "0x1234567890123456789012345678901234567890",
             "destination_address": "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
@@ -150,7 +150,7 @@ class TestExecutionRequiresConfirmation:
     def test_execute_without_confirmation_fails(self, client):
         """Test that execution without confirmation fails."""
         # Create a plan
-        client.post("/wallets/initialize")
+        client.post("/wallets/initialize", json={})
         create_response = client.post("/plans", json={
             "source_address": "0x1234567890123456789012345678901234567890",
             "destination_address": "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",

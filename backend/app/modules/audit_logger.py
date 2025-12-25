@@ -165,17 +165,21 @@ class AuditLogger:
     
     def log_wallet_created(self, wallet: Wallet) -> AuditEntry:
         """Log wallet creation."""
+        # Handle both enum and string values for role/state
+        role_value = wallet.role.value if hasattr(wallet.role, 'value') else wallet.role
+        state_value = wallet.state.value if hasattr(wallet.state, 'value') else wallet.state
+        
         return self.log_event(
             event_type=AuditEventType.WALLET_CREATED,
-            summary=f"Wallet created: {wallet.address[:10]}... ({wallet.role.value})",
+            summary=f"Wallet created: {wallet.address[:10]}... ({role_value})",
             wallet_id=wallet.id,
             details={
                 "address": wallet.address,
-                "role": wallet.role.value,
+                "role": role_value,
                 "chain": wallet.chain,
                 "is_one_time": wallet.is_one_time,
             },
-            after_state={"state": wallet.state.value},
+            after_state={"state": state_value},
         )
     
     def log_wallet_used(
@@ -185,6 +189,8 @@ class AuditLogger:
         plan_id: Optional[str] = None
     ) -> AuditEntry:
         """Log wallet usage."""
+        state_value = wallet.state.value if hasattr(wallet.state, 'value') else wallet.state
+        
         return self.log_event(
             event_type=AuditEventType.WALLET_USED,
             summary=f"Wallet used: {wallet.address[:10]}...",
@@ -196,7 +202,7 @@ class AuditLogger:
                 "transaction_count": wallet.transaction_count,
             },
             before_state={"state": WalletState.ACTIVE.value},
-            after_state={"state": wallet.state.value},
+            after_state={"state": state_value},
         )
     
     def log_wallet_retired(self, wallet: Wallet) -> AuditEntry:

@@ -2,24 +2,14 @@
 
 from pathlib import Path
 from typing import Optional
-from fastapi import APIRouter, HTTPException, Depends, UploadFile, File
+from fastapi import APIRouter, HTTPException, Depends
 import json
 
 from ..core.service import HideXService
 from ..modules.policy_engine import create_default_policy
+from .deps import get_service
 
 router = APIRouter(prefix="/policies", tags=["policies"])
-
-# Service instance
-_service: Optional[HideXService] = None
-
-
-def get_service() -> HideXService:
-    """Get or create service instance."""
-    global _service
-    if _service is None:
-        _service = HideXService()
-    return _service
 
 
 @router.get("")

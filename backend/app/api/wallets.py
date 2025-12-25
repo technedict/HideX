@@ -7,19 +7,9 @@ from ..core.service import HideXService
 from ..models.wallet import WalletRole
 from ..schemas.requests import InitializeWalletRequest, CreateWalletRequest
 from ..schemas.responses import WalletResponse, WalletListResponse, ErrorResponse
+from .deps import get_service
 
 router = APIRouter(prefix="/wallets", tags=["wallets"])
-
-# Service instance (would use dependency injection in production)
-_service: Optional[HideXService] = None
-
-
-def get_service() -> HideXService:
-    """Get or create service instance."""
-    global _service
-    if _service is None:
-        _service = HideXService()
-    return _service
 
 
 @router.post("/initialize")
