@@ -1,0 +1,78 @@
+{
+  "id": "default",
+  "name": "Default Privacy Policy",
+  "version": "1.0.0",
+  "description": "Standard privacy hygiene policy for transaction planning. This policy enforces basic operational discipline to reduce transaction linkability.",
+  "strict_mode": false,
+  "allow_override": true,
+  "rules": [
+    {
+      "id": "no_reuse",
+      "type": "no_address_reuse",
+      "name": "No Address Reuse",
+      "description": "Prevent reusing addresses within a transaction plan",
+      "enabled": true,
+      "severity": "error",
+      "parameters": {},
+      "rationale": "Address reuse creates clear links between transactions. Once an address is used, it becomes associated with your identity or activity patterns."
+    },
+    {
+      "id": "min_delay",
+      "type": "min_delay",
+      "name": "Minimum Delay",
+      "description": "Ensure minimum time between transaction steps",
+      "enabled": true,
+      "severity": "warning",
+      "parameters": {
+        "min_seconds": 300
+      },
+      "rationale": "Transactions occurring in quick succession are easily correlated by timing analysis. A minimum delay reduces this risk."
+    },
+    {
+      "id": "max_delay",
+      "type": "max_delay",
+      "name": "Maximum Delay",
+      "description": "Limit maximum delay to reasonable bounds",
+      "enabled": true,
+      "severity": "warning",
+      "parameters": {
+        "max_seconds": 86400
+      },
+      "rationale": "Very long delays may be impractical and increase exposure to price volatility or failed transactions."
+    },
+    {
+      "id": "no_same_block",
+      "type": "no_same_block",
+      "name": "No Same Block",
+      "description": "Prevent multiple transactions in the same block",
+      "enabled": true,
+      "severity": "error",
+      "parameters": {},
+      "rationale": "Transactions in the same block are trivially linkable. Any observer can see they were submitted together."
+    },
+    {
+      "id": "min_hops",
+      "type": "min_hops",
+      "name": "Minimum Hops",
+      "description": "Require minimum number of intermediate steps",
+      "enabled": true,
+      "severity": "warning",
+      "parameters": {
+        "min_hops": 2
+      },
+      "rationale": "Multiple hops through transit wallets provide separation between source and destination."
+    },
+    {
+      "id": "max_hops",
+      "type": "max_hops",
+      "name": "Maximum Hops",
+      "description": "Limit maximum hops to prevent excessive complexity",
+      "enabled": true,
+      "severity": "warning",
+      "parameters": {
+        "max_hops": 10
+      },
+      "rationale": "Too many hops increases gas costs and execution risk without proportional privacy benefit."
+    }
+  ]
+}

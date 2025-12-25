@@ -1,0 +1,66 @@
+{
+  "id": "strict_privacy",
+  "name": "Strict Privacy Policy",
+  "version": "1.0.0",
+  "description": "Strict privacy policy with enhanced requirements. Use this when privacy is a high priority. All warnings are treated as errors.",
+  "strict_mode": true,
+  "allow_override": false,
+  "rules": [
+    {
+      "id": "no_reuse",
+      "type": "no_address_reuse",
+      "name": "No Address Reuse",
+      "description": "Prevent reusing addresses within a transaction plan",
+      "enabled": true,
+      "severity": "error",
+      "parameters": {},
+      "rationale": "Address reuse is the most common privacy leak. Strict enforcement is required."
+    },
+    {
+      "id": "min_delay",
+      "type": "min_delay",
+      "name": "Minimum Delay (Strict)",
+      "description": "Require significant delay between steps",
+      "enabled": true,
+      "severity": "error",
+      "parameters": {
+        "min_seconds": 1800
+      },
+      "rationale": "Strict mode requires at least 30 minutes between steps to reduce timing correlation."
+    },
+    {
+      "id": "no_same_block",
+      "type": "no_same_block",
+      "name": "No Same Block",
+      "description": "Prevent multiple transactions in the same block",
+      "enabled": true,
+      "severity": "error",
+      "parameters": {},
+      "rationale": "Same-block transactions are immediately linkable."
+    },
+    {
+      "id": "min_hops",
+      "type": "min_hops",
+      "name": "Minimum Hops (Strict)",
+      "description": "Require at least 3 hops",
+      "enabled": true,
+      "severity": "error",
+      "parameters": {
+        "min_hops": 3
+      },
+      "rationale": "Strict mode requires more separation between source and destination."
+    },
+    {
+      "id": "max_amount_similarity",
+      "type": "max_amount_similarity",
+      "name": "Amount Variation Required",
+      "description": "Prevent amounts that are too similar to the total",
+      "enabled": true,
+      "severity": "error",
+      "parameters": {
+        "max_percent": 0.9
+      },
+      "rationale": "Large single transfers are easily linked by amount matching."
+    }
+  ]
+}
